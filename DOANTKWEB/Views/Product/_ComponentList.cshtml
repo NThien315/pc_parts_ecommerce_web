@@ -1,0 +1,75 @@
+﻿@model List<DOANTKWEB.Models.Product>
+
+@{
+    Layout = null;
+    string partType = ViewBag.PartType ?? "";
+}
+
+<div class="list-group">
+    @if (!Model.Any())
+    {
+        <div class="text-center text-muted py-4">
+            <i class="bi bi-box-seam fs-1"></i>
+            <p class="mt-2">Không tìm thấy sản phẩm nào.</p>
+        </div>
+    }
+    else
+    {
+        <div class="list-group">
+            @foreach (var item in Model)
+            {
+                // 1. Tính giá hiển thị
+                decimal finalPrice = item.DiscountPrice ?? item.Price;
+
+                // 2. Xử lý logic ảnh 
+                string imgPath = "https://placehold.co/400x300?text=No+Image"; 
+                if (!string.IsNullOrEmpty(item.Images))
+                {
+                    imgPath = "/Images/" + item.Images;
+                }
+
+                <button type="button" class="list-group-item list-group-item-action btn-select-part d-flex align-items-center justify-content-between p-3"
+                        data-part-type="@Request["partType"]"
+                        data-product-id="@item.ProductID"
+                        data-product-name="@item.ProductName"
+                        data-price="@finalPrice"
+                        data-img="@imgPath">
+                    <div class="d-flex align-items-center pointer-events-none">
+                        <img src="@imgPath"
+                             style="width: 50px; height: 50px; object-fit: cover; margin-right: 15px;"
+                             onerror="this.src='https://placehold.co/100x100?text=No+Image'" />
+
+                        <div>
+                            <div class="fw-bold text-dark text-start">@item.ProductName</div>
+                            <div class="small text-muted text-start">
+                                Bảo hành: @item.WarrantyMonths tháng
+                                @if (item.StockQuantity > 0)
+                                {
+                                    <span class="text-success">| Còn hàng (@item.StockQuantity)</span>
+                                }
+                                else
+                                {
+                                    <span class="text-danger">| Hết hàng</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-end pointer-events-none" style="min-width: 100px;">
+                        <div class="fw-bold text-danger">@String.Format("{0:N0}₫", finalPrice)</div>
+                        @if (item.DiscountPrice.HasValue)
+                        {
+                            <small class="text-decoration-line-through text-muted" style="font-size: 0.8rem;">@String.Format("{0:N0}₫", item.Price)</small>
+                        }
+                    </div>
+                </button>
+            }
+        </div>
+    }
+</div>
+
+<style>
+    .pointer-events-none {
+        pointer-events: none;
+    }
+</style>

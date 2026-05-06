@@ -1,0 +1,190 @@
+﻿@{
+    ViewBag.Title = "Giới thiệu";
+}
+
+<div class="container mt-4 mb-5">
+
+    <style>
+        .about-wrapper {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 14px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.06);
+        }
+
+        .about-title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+            .about-title i {
+                font-size: 1.7rem;
+                color: #0d6efd;
+            }
+
+        .about-section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-top: 25px;
+            margin-bottom: 12px;
+        }
+
+        .about-paragraph {
+            font-size: 1rem;
+            line-height: 1.75rem;
+            color: #444;
+            text-align: justify;
+        }
+
+        .about-highlight {
+            background: #e8f1ff;
+            padding: 12px 18px;
+            border-left: 4px solid #0d6efd;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 1.05rem;
+        }
+
+        .about-img {
+            width: 100%;
+            border-radius: 14px;
+            box-shadow: 0 0 16px rgba(0,0,0,0.1);
+            margin-bottom: 22px;
+        }
+
+        .mission-box {
+            background: #f8f9fc;
+            padding: 18px 20px;
+            border-radius: 14px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.05);
+            margin-top: 15px;
+        }
+
+            .mission-box i {
+                font-size: 1.8rem;
+                color: #0d6efd;
+                margin-bottom: 10px;
+            }
+
+        .team-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 14px;
+            box-shadow: 0 0 18px rgba(0,0,0,0.06);
+            text-align: center;
+            transition: 0.25s;
+        }
+
+            .team-card:hover {
+                transform: translateY(-6px);
+                box-shadow: 0 15px 25px rgba(0,0,0,0.1);
+            }
+
+            .team-card img {
+                width: 120px;
+                height: 120px;
+                object-fit: cover;
+                border-radius: 50%;
+                margin-bottom: 15px;
+            }
+
+        .team-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .team-role {
+            font-size: 0.95rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+    </style>
+
+    <div class="about-wrapper">
+
+        <!-- ================= TITLE ================= -->
+        <div class="about-title">
+            <i class="bi bi-info-circle-fill"></i>
+            Về chúng tôi
+        </div>
+
+        <img src="~/Images/banner1.jpg" class="about-img" />
+
+        <p class="about-paragraph">
+            Chào mừng bạn đến với <strong>TTG Shop</strong> – cửa hàng công nghệ & máy tính hàng đầu,
+            nơi mang đến cho khách hàng những sản phẩm chất lượng, giá tốt cùng dịch vụ tận tâm.
+            Với sứ mệnh mang công nghệ đến gần hơn với mọi người, chúng tôi tự hào cung cấp
+            các sản phẩm PC Gaming, Laptop, PC Văn Phòng, PC Đồ Họa và nhiều linh kiện chính hãng.
+        </p>
+
+        <!-- ================= SỨ MỆNH ================= -->
+        <div class="about-section-title">Sứ mệnh của chúng tôi</div>
+
+        <div class="mission-box">
+            <i class="bi bi-bullseye"></i>
+            <p class="about-paragraph mt-2">
+                Mang đến cho khách hàng những sản phẩm chất lượng cao, giá thành hợp lý và dịch vụ hỗ trợ tốt nhất.
+                Chúng tôi không chỉ bán hàng, mà còn đồng hành cùng khách hàng trong suốt quá trình sử dụng sản phẩm.
+            </p>
+        </div>
+
+        <!-- ================= TẦM NHÌN ================= -->
+        <div class="about-section-title">Tầm nhìn</div>
+
+        <p class="about-paragraph">
+            Trở thành hệ thống bán lẻ máy tính – công nghệ uy tín và được tin dùng nhất tại Việt Nam.
+            Mục tiêu của chúng tôi là mở rộng hệ thống phân phối và nâng cao chất lượng dịch vụ từng ngày.
+        </p>
+
+        <!-- ================= GIÁ TRỊ CỐT LÕI ================= -->
+        <div class="about-section-title">Giá trị cốt lõi</div>
+
+        <div class="about-highlight">
+            ✔ Chất lượng sản phẩm là ưu tiên hàng đầu<br />
+            ✔ Dịch vụ hậu mãi minh bạch, nhanh chóng<br />
+            ✔ Tận tâm – Uy tín – Chuyên nghiệp<br />
+            ✔ Luôn cải tiến để mang lại trải nghiệm tốt nhất
+        </div>
+
+        <!-- ================= TEAM ================= -->
+        <div class="about-section-title">Đội ngũ phát triển</div>
+
+        <div class="row mt-3">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="team-card">
+                    <img src="https://i.pravatar.cc/300?img=12" />
+                    <div class="team-name">Trần Minh Phúc</div>
+                    <div class="team-role">Founder / Developer</div>
+                    <div class="team-role">MSSV: 2001230690</div>
+                    <p class="text-muted">Phụ trách Database, xây dựng các giao diện, chức năng chính và phụ.</p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="team-card">
+                    <img src="https://i.pravatar.cc/300?img=7" />
+                    <div class="team-name">Lê Nhật Thiện</div>
+                    <div class="team-role">UI/UX Designer</div>
+                    <div class="team-role">MSSV: 2001230922</div>
+                    <p class="text-muted">Tối ưu giao diện và các ràng buộc.</p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="team-card">
+                    <img src="https://i.pravatar.cc/300?img=4" />
+                    <div class="team-name">Nguyễn An Duy</div>
+                    <div class="team-role">Kỹ thuật viên phần cứng</div>
+                    <div class="team-role">MSSV: 2001230108</div>
+                    <p class="text-muted">Xây dựng các giao diện, chức năng chính và phụ.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>

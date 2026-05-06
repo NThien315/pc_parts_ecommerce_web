@@ -1,0 +1,166 @@
+﻿@{
+    ViewBag.Title = "Hướng dẫn trả góp";
+}
+
+<div class="container mt-4 mb-5">
+
+    <style>
+        .guide-wrapper {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 14px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.06);
+        }
+
+        .guide-title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+            .guide-title i {
+                font-size: 1.7rem;
+                color: #0d6efd;
+            }
+
+        .step-box {
+            background: #f8f9fa;
+            padding: 22px;
+            border-radius: 12px;
+            box-shadow: 0 0 14px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            display: flex;
+            gap: 18px;
+            transition: 0.2s;
+        }
+
+            .step-box:hover {
+                transform: translateY(-4px);
+                background: #eef5ff;
+            }
+
+            .step-box i {
+                font-size: 2.4rem;
+                color: #0d6efd;
+            }
+
+        .bank-box {
+            text-align: center;
+            padding: 20px;
+            border-radius: 12px;
+            background: #ffffff;
+            box-shadow: 0 0 12px rgba(0,0,0,0.06);
+            transition: 0.2s;
+        }
+
+            .bank-box:hover {
+                transform: translateY(-4px);
+            }
+
+            .bank-box img {
+                max-height: 50px;
+                object-fit: contain;
+            }
+
+        .register-box {
+            background: #e9f7ef;
+            border-left: 5px solid #28a745;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 25px;
+        }
+    </style>
+
+    <div class="guide-wrapper">
+
+        <div class="guide-title">
+            <i class="bi bi-credit-card"></i>
+            Hướng dẫn mua hàng trả góp
+        </div>
+
+        <p class="mb-4">
+            Khách hàng có thể dễ dàng mua hàng trả góp với thủ tục nhanh gọn, lãi suất thấp.
+            Chúng tôi hỗ trợ trả góp qua <strong>thẻ tín dụng</strong> và <strong>công ty tài chính</strong> như FE Credit, HD Saison...
+        </p>
+
+        <h4 class="fw-bold mb-3">✦ Quy trình mua hàng trả góp</h4>
+
+        <div class="step-box">
+            <i class="bi bi-cart-check"></i>
+            <div>
+                <h5 class="fw-bold">Bước 1: Chọn sản phẩm muốn mua</h5>
+                <p>Chọn sản phẩm trên website hoặc cửa hàng mà bạn muốn trả góp.</p>
+            </div>
+        </div>
+
+        <div class="step-box">
+            <i class="bi bi-ui-checks-grid"></i>
+            <div>
+                <h5 class="fw-bold">Bước 2: Chọn hình thức trả góp</h5>
+                <p>Bạn có thể chọn trả góp qua thẻ tín dụng hoặc công ty tài chính.</p>
+            </div>
+        </div>
+
+        <div class="step-box">
+            <i class="bi bi-file-earmark-text"></i>
+            <div>
+                <h5 class="fw-bold">Bước 3: Cung cấp hồ sơ</h5>
+                <p>CMND/CCCD + bằng lái xe hoặc hộ khẩu (nếu chọn công ty tài chính).</p>
+            </div>
+        </div>
+
+        <div class="step-box">
+            <i class="bi bi-person-check"></i>
+            <div>
+                <h5 class="fw-bold">Bước 4: Duyệt hồ sơ & nhận hàng</h5>
+                <p>Duyệt nhanh 10–30 phút, nhận sản phẩm ngay khi được phê duyệt.</p>
+            </div>
+        </div>
+
+        <!-- PAYMENT OPTIONS -->
+        <h4 class="fw-bold mt-5 mb-3">✦ Các phương thức trả góp</h4>
+
+        <div class="row mb-4">
+            <div class="col-lg-4 col-md-6 mb-3">
+                <div class="bank-box">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" />
+                    <p class="mt-2 fw-bold">Trả góp qua thẻ Visa</p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 mb-3">
+                <div class="bank-box">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" />
+                    <p class="mt-2 fw-bold">Trả góp qua Mastercard</p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 mb-3">
+                <div class="bank-box">
+                    <img src="data:image/png;base64,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" />
+                    <p class="mt-2 fw-bold">Trả góp qua HD Saison</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="register-box mt-4">
+            <h5 class="fw-bold">Lưu ý dành cho khách hàng:</h5>
+            <ul>
+                <li>Không áp dụng trả góp cho sản phẩm khuyến mãi shock.</li>
+                <li>Đơn hàng trả góp tối thiểu: <strong>3.000.000 VNĐ</strong>.</li>
+                <li>Không giữ giấy tờ gốc – thủ tục nhanh, an toàn.</li>
+            </ul>
+        </div>
+
+        <div class="text-center mt-5">
+            <a href="@Url.Action("Contact", "Home")" class="btn btn-primary btn-lg px-4">
+                <i class="bi bi-envelope"></i> Liên hệ tư vấn trả góp
+            </a>
+        </div>
+
+    </div>
+
+</div>

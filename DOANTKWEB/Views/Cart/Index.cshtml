@@ -1,0 +1,181 @@
+﻿@model DOANTKWEB.Models.Cart
+
+@{
+    ViewBag.Title = "Giỏ hàng của bạn";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4 mb-5">
+    <h2 class="fw-bold mb-4 text-uppercase border-start border-4 border-danger ps-3">
+        <i class="bi bi-cart3"></i> Giỏ hàng
+    </h2>
+
+    @if (Model == null || Model.CartItems == null || !Model.CartItems.Any())
+    {
+        // === TRƯỜNG HỢP 1: GIỎ HÀNG TRỐNG ===
+        <div class="text-center py-5 bg-light rounded shadow-sm">
+            <i class="bi bi-cart-x text-muted" style="font-size: 4rem;"></i>
+            <h4 class="mt-3 fw-bold text-secondary">Giỏ hàng của bạn đang trống!</h4>
+            <p class="text-muted">Có vẻ như bạn chưa chọn mua sản phẩm nào.</p>
+            <a href="@Url.Action("Shop", "Home")" class="btn btn-primary btn-lg mt-3 px-5 rounded-pill">
+                <i class="bi bi-arrow-left me-2"></i> Tiếp tục mua sắm
+            </a>
+        </div>
+    }
+    else
+    {
+        // === TRƯỜNG HỢP 2: CÓ SẢN PHẨM ===
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="table-responsive shadow-sm rounded">
+                    <table class="table table-hover align-middle mb-0 border">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 40%">Sản phẩm</th>
+                                <th style="width: 20%">Đơn giá</th>
+                                <th style="width: 15%">Số lượng</th>
+                                <th style="width: 20%">Thành tiền</th>
+                                <th style="width: 5%"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.CartItems)
+                            {
+                                // Tính giá bán (ưu tiên giá giảm)
+                                decimal price = (item.Product.DiscountPrice.HasValue && item.Product.DiscountPrice < item.Product.Price)
+                                                ? item.Product.DiscountPrice.Value
+                                                : item.Product.Price;
+
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src="~/Images/@item.Product.Images"
+                                                 style="width: 70px; height: 70px; object-fit: cover; border-radius: 8px;"
+                                                 class="border me-3"
+                                                 onerror="this.src='https://via.placeholder.com/70'" />
+                                            <div>
+                                                <a href="@Url.Action("Details", "Product", new { id = item.ProductID })"
+                                                   class="fw-bold text-dark text-decoration-none">
+                                                    @item.Product.ProductName
+                                                </a>
+                                                <div class="small text-muted">Mã: #@item.ProductID</div>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        @if (item.Product.DiscountPrice < item.Product.Price)
+                                        {
+                                            <span class="d-block fw-bold">@String.Format("{0:N0}₫", price)</span>
+                                            <span class="text-decoration-line-through text-muted small">
+                                                @String.Format("{0:N0}₫", item.Product.Price)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="fw-bold">@String.Format("{0:N0}₫", price)</span>
+                                        }
+                                    </td>
+
+                                    <td>
+                                        @using (Html.BeginForm("Update", "Cart", FormMethod.Post))
+                                        {
+                                            <input type="hidden" name="itemId" value="@item.CartItemID" />
+                                            <input type="number" name="quantity" value="@item.Quantity" min="1" max="99"
+                                                   class="form-control text-center fw-bold"
+                                                   onchange="this.form.submit()" />
+                                        }
+                                    </td>
+
+                                    <td class="fw-bold text-primary">
+                                        @String.Format("{0:N0}₫", price * item.Quantity)
+                                    </td>
+
+                                    <td>
+                                        <a href="javascript:void(0);"
+                                           class="text-danger fs-5"
+                                           onclick="confirmDelete('@item.CartItemID')"
+                                           title="Xóa khỏi giỏ">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-3">
+                    <a href="@Url.Action("Shop", "Home")" class="text-decoration-none">
+                        <i class="bi bi-arrow-left"></i> Tiếp tục xem sản phẩm
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-4 mt-4 mt-lg-0">
+                <div class="card border-0 shadow-sm bg-light">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-3">Tổng tiền giỏ hàng</h5>
+
+                        @{
+                            // Tính tổng tiền toàn giỏ
+                            decimal totalCart = 0;
+                            foreach (var i in Model.CartItems)
+                            {
+                                decimal p = (i.Product.DiscountPrice < i.Product.Price) ? i.Product.DiscountPrice.Value : i.Product.Price;
+                                totalCart += p * i.Quantity;
+                            }
+                        }
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Tạm tính:</span>
+                            <span class="fw-bold">@String.Format("{0:N0}₫", totalCart)</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Phí vận chuyển:</span>
+                            <span class="text-success">Miễn phí</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between mb-4 align-items-center">
+                            <span class="fs-5 fw-bold">Tổng cộng:</span>
+                            <span class="fs-4 fw-bold text-danger">@String.Format("{0:N0}₫", totalCart)</span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">Phương thức thanh toán:</label>
+                            <select class="form-select">
+                                <option value="COD">Thanh toán khi nhận hàng (COD)</option>
+                                <option value="BANK" disabled>Chuyển khoản (Đang bảo trì)</option>
+                            </select>
+                        </div>
+
+                        <a href="@Url.Action("Checkout", "Order")" class="btn btn-danger w-100 py-2 fs-6 fw-bold text-uppercase">
+                            Tiến hành thanh toán
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function confirmDelete(id) {
+        Swal.fire({
+            title: 'Bạn chắc chắn chứ?',
+            text: "Sản phẩm này sẽ bị xóa khỏi giỏ hàng!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Vâng, xóa đi!',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Nếu người dùng bấm Đồng ý -> Chuyển hướng đến link xóa
+                window.location.href = "/Cart/Remove/" + id;
+            }
+        });
+    }
+</script>

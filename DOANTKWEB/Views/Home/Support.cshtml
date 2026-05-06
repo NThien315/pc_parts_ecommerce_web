@@ -1,0 +1,156 @@
+﻿@{
+    ViewBag.Title = "Hỗ trợ khách hàng";
+}
+
+<div class="container mt-4 mb-5">
+
+    <style>
+        .support-wrapper {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 14px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.06);
+        }
+
+        .support-title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+            .support-title i {
+                font-size: 1.7rem;
+                color: #0d6efd;
+            }
+
+        .support-box {
+            padding: 22px;
+            border-radius: 14px;
+            background: #f8f9fa;
+            box-shadow: 0 0 14px rgba(0,0,0,0.06);
+            transition: 0.2s;
+            cursor: pointer;
+            min-height: 160px;
+        }
+
+            .support-box:hover {
+                transform: translateY(-4px);
+                background: #e9f2ff;
+            }
+
+            .support-box i {
+                font-size: 2.2rem;
+                color: #0d6efd;
+                margin-bottom: 12px;
+            }
+
+        .faq-item {
+            background: #f8f9fa;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.04);
+        }
+
+            .faq-item:hover {
+                background: #e9f2ff;
+            }
+
+        .faq-question {
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .faq-answer {
+            display: none;
+            margin-top: 10px;
+            color: #555;
+        }
+
+        .contact-shortcut a {
+            text-decoration: none;
+            color: white;
+        }
+    </style>
+
+    <div class="support-wrapper">
+
+        <!-- ============ TITLE ============ -->
+        <div class="support-title">
+            <i class="bi bi-headset"></i>
+            Trung tâm hỗ trợ khách hàng
+        </div>
+
+        <!-- ============ QUICK SUPPORT BLOCKS ============ -->
+        <div class="row mb-4">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="support-box text-center">
+                    <i class="bi bi-box-seam"></i>
+                    <h5 class="fw-bold">Tra cứu đơn hàng</h5>
+                    <p>Kiểm tra tình trạng, lịch sử và thông tin đơn hàng của bạn.</p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="support-box text-center">
+                    <i class="bi bi-arrow-repeat"></i>
+                    <h5 class="fw-bold">Chính sách đổi trả</h5>
+                    <p>Hỗ trợ đổi trả sản phẩm nhanh chóng và minh bạch.</p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="support-box text-center">
+                    <i class="bi bi-shield-check"></i>
+                    <h5 class="fw-bold">Bảo hành & sửa chữa</h5>
+                    <p>Xử lý bảo hành chính hãng & hỗ trợ kỹ thuật tận tâm.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ FAQ ============ -->
+        <div class="mt-4">
+            <h4 class="fw-bold mb-3">Câu hỏi thường gặp (FAQ)</h4>
+
+            <div class="faq-item" onclick="toggleFaq(1)">
+                <div class="faq-question">✔ Tôi muốn đổi trả sản phẩm thì cần điều kiện gì?</div>
+                <div class="faq-answer" id="faq1">
+                    Sản phẩm còn nguyên vẹn, đầy đủ phụ kiện, hóa đơn và còn thời hạn đổi trả theo quy định.
+                </div>
+            </div>
+
+            <div class="faq-item" onclick="toggleFaq(2)">
+                <div class="faq-question">✔ Thời gian bảo hành bao lâu?</div>
+                <div class="faq-answer" id="faq2">
+                    Tùy sản phẩm từ 12–36 tháng, dựa theo chính sách của từng hãng.
+                </div>
+            </div>
+
+            <div class="faq-item" onclick="toggleFaq(3)">
+                <div class="faq-question">✔ Phí vận chuyển được tính như thế nào?</div>
+                <div class="faq-answer" id="faq3">
+                    Miễn phí nội thành với đơn từ 1.000.000đ, tỉnh sẽ được tính theo đơn vị vận chuyển.
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ CONTACT SHORTCUT ============ -->
+        <div class="contact-shortcut text-center mt-5">
+            <a href="@Url.Action("Contact", "Home")" class="btn btn-primary btn-lg px-4 py-2">
+                <i class="bi bi-envelope"></i> Liên hệ trực tiếp với chúng tôi
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    function toggleFaq(id) {
+        const ans = document.getElementById("faq" + id);
+        ans.style.display = ans.style.display === "block" ? "none" : "block";
+    }
+</script>

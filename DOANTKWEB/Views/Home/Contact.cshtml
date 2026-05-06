@@ -1,0 +1,193 @@
+﻿@{
+    ViewBag.Title = "Liên hệ";
+}
+
+<div class="container mt-4 mb-5">
+
+    <style>
+        .contact-wrapper {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 0 18px rgba(0,0,0,0.07);
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.04);
+        }
+
+            .info-box i {
+                font-size: 1.7rem;
+                color: #0d6efd;
+            }
+
+        .contact-form label {
+            font-weight: 600;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            padding: 10px 12px;
+        }
+
+        .btn-submit {
+            padding: 10px 22px;
+            font-size: 1.05rem;
+            border-radius: 10px;
+        }
+
+        .map-wrapper iframe {
+            width: 100%;
+            height: 360px;
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 0 16px rgba(0,0,0,0.08);
+        }
+
+        .contact-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+            .contact-title i {
+                font-size: 1.5rem;
+                color: #0d6efd;
+            }
+    </style>
+
+    <div class="contact-wrapper">
+
+        <div class="contact-title">
+            <i class="bi bi-envelope-open"></i>
+            Liên hệ với chúng tôi
+        </div>
+
+        <div class="row">
+            <!-- =================== LEFT: FORM =================== -->
+            <div class="col-lg-6 mb-4">
+                <h5 class="fw-bold mb-3">Gửi tin nhắn</h5>
+
+                <div id="alertBox"></div>
+
+                <form id="contactForm" class="contact-form">
+
+                    <div class="mb-3">
+                        <label>Họ và tên:</label>
+                        <input type="text" class="form-control" id="name" placeholder="Nhập họ tên">
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Email:</label>
+                        <input type="email" class="form-control" id="email" placeholder="Nhập email">
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Số điện thoại:</label>
+                        <input type="text" class="form-control" id="phone" placeholder="Nhập số điện thoại">
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Nội dung:</label>
+                        <textarea class="form-control" id="message" rows="4" placeholder="Nhập nội dung liên hệ"></textarea>
+                    </div>
+
+                    <button type="button" onclick="sendContact()" class="btn btn-primary btn-submit">
+                        <i class="bi bi-send"></i> Gửi liên hệ
+                    </button>
+
+                </form>
+            </div>
+
+            <!-- =================== RIGHT: CONTACT INFO =================== -->
+            <div class="col-lg-6">
+                <h5 class="fw-bold mb-3">Thông tin liên hệ</h5>
+
+                <div class="info-box">
+                    <i class="bi bi-geo-alt-fill"></i>
+                    <div>
+                        <strong>Địa chỉ:</strong> <br />
+                        123 Đường ABC, Quận 1, TP.HCM
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <i class="bi bi-telephone-fill"></i>
+                    <div>
+                        <strong>Hotline:</strong> <br />
+                        1900.1234
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <i class="bi bi-envelope-fill"></i>
+                    <div>
+                        <strong>Email:</strong> <br />
+                        hotro@ttgshop.vn
+                    </div>
+                </div>
+
+                <h5 class="fw-bold mt-4 mb-3">Bản đồ</h5>
+
+                <div class="map-wrapper">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.440465125257!2d106.70042351533424!3d10.7768890621987!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f362f1dc671%3A0xf987ad740b938db!2zQ8O0bmcgVHkgVEhQIFAuSENN!5e0!3m2!1svi!2svi!4v1706000000000"
+                            allowfullscreen
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function sendContact() {
+        const name = document.getElementById("name").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const message = document.getElementById("message").value.trim();
+
+        if (!name || !email || !message) {
+            showAlert("error", "Vui lòng nhập đầy đủ thông tin bắt buộc.");
+            return;
+        }
+
+        fetch("@Url.Action("Send", "Home")", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, email, phone, message })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success)
+                showAlert("success", data.message);
+            else
+                showAlert("error", data.message);
+        })
+        .catch(() => showAlert("error", "Có lỗi xảy ra, vui lòng thử lại."));
+    }
+
+    function showAlert(type, text) {
+        const box = document.getElementById("alertBox");
+        const color = type === "success" ? "alert-success" : "alert-danger";
+
+        box.innerHTML = `
+            <div class="alert ${color} alert-dismissible fade show" role="alert">
+                ${text}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+    }
+</script>
