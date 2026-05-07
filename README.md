@@ -1,5 +1,7 @@
 # PCPartsWeb - E-Commerce Website for Computer Components
 
+> Đồ án môn Lập trình Web
+
 Đây là dự án Website Thương mại điện tử chuyên cung cấp linh kiện máy tính, được xây dựng trên nền tảng **C# ASP.NET MVC 5**. Dự án không chỉ cung cấp các chức năng mua sắm cơ bản mà còn tích hợp hệ thống **"Build PC"** cho phép thêm cấu hình tùy chỉnh vào giỏ hàng, cùng với hệ thống quản trị (Admin Dashboard) chặt chẽ.
 
 ## Giao diện ứng dụng (Screenshots)
@@ -20,7 +22,7 @@
 * **View Engine:** `Razor (.cshtml)` xử lý Data Binding và render UI động.
 * **Libraries:** `SweetAlert2` (Thông báo UI/UX), `PagedList.Mvc` (Phân trang dữ liệu).
 
-### ⚙️ Backend & Database
+### Backend & Database
 * **Framework:** C# ASP.NET MVC 5 (.NET Framework 4.7.2).
 * **Cơ sở dữ liệu:** SQL Server.
 * **ORM:** Entity Framework 6.
