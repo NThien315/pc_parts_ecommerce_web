@@ -39,3 +39,10 @@
 ### Dành cho Quản trị viên (Admin)
 * **CRUD Sản phẩm:** Thêm, sửa, xóa linh kiện với chức năng **Upload hình ảnh** an toàn (tự động đổi tên file chống trùng lặp theo thời gian thực).
 * **Phân quyền chặt chẽ:** Các tác vụ quản trị được bảo vệ hoàn toàn, yêu cầu xác thực `Role = "Admin"`.
+
+## Hướng dẫn cài đặt 
+
+1. Clone repository :
+   ```bash
+   git clone [https://github.com/NThien315/pc_parts_ecommerce_web.git](https://github.com/NThien315/pc_parts_ecommerce_web.git)
+   ```
