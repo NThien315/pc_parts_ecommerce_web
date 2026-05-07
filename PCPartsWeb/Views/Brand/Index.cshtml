@@ -1,0 +1,154 @@
+﻿@model IEnumerable<PCPartsWeb.Models.Brand>
+@{
+    ViewBag.Title = "Quản lý Thương hiệu";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="text-primary fw-bold"><i class="bi bi-award-fill"></i> Quản lý Thương hiệu</h3>
+        <button type="button" class="btn btn-success shadow-sm" data-bs-toggle="modal" data-bs-target="#createModal">
+            <i class="bi bi-plus-lg"></i> Thêm mới
+        </button>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show"><i class="bi bi-check-circle"></i> @TempData["Success"] <button class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show"><i class="bi bi-exclamation-triangle"></i> @TempData["Error"] <button class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <table class="table table-hover table-striped align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th class="ps-4">ID</th>
+                        <th>Tên Thương hiệu</th>
+                        <th>Xuất xứ</th>
+                        <th class="text-center">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="ps-4 fw-bold">#@item.BrandID</td>
+                            <td class="fw-bold text-primary">@item.BrandName</td>
+                            <td>@item.Origin</td>
+                            <td class="text-center">
+                                <div class="d-flex justify-content-center gap-2">
+                                    <button class="btn btn-sm btn-warning"
+                                            onclick="openEditModal('@item.BrandID', '@item.BrandName', '@item.Origin')">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+
+                                    <form action="@Url.Action("Delete", "Brand")" method="post" id="delBrand-@item.BrandID">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@item.BrandID" />
+                                        <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelBrand(@item.BrandID)">
+                                            <i class="bi bi-trash3"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="createModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title fw-bold">Thêm Thương hiệu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="@Url.Action("Create", "Brand")" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Tên thương hiệu</label>
+                        <input type="text" name="BrandName" class="form-control" required placeholder="Nhập tên hãng..." />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Xuất xứ</label>
+                        <input type="text" name="Origin" class="form-control" placeholder="Ví dụ: Mỹ, Đài Loan..." />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-success">Lưu lại</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title fw-bold">Chỉnh sửa Thương hiệu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="@Url.Action("Edit", "Brand")" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <input type="hidden" id="editBrandId" name="BrandID" />
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Tên thương hiệu</label>
+                        <input type="text" id="editBrandName" name="BrandName" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Xuất xứ</label>
+                        <input type="text" id="editOrigin" name="Origin" class="form-control" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-warning">Cập nhật</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // 1. Hàm mở Modal Edit và điền dữ liệu cũ
+    function openEditModal(id, name, origin) {
+        // Gán giá trị vào các ô input trong Modal Sửa
+        document.getElementById('editBrandId').value = id;
+        document.getElementById('editBrandName').value = name;
+        document.getElementById('editOrigin').value = origin;
+
+        // Hiển thị Modal
+        var myModal = new bootstrap.Modal(document.getElementById('editModal'));
+        myModal.show();
+    }
+
+    // 2. Hàm Xóa (Popup)
+    function confirmDelBrand(id) {
+        Swal.fire({
+            title: 'Xóa thương hiệu này?',
+            text: "Hành động này không thể hoàn tác!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            confirmButtonText: 'Xóa ngay',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('delBrand-' + id).submit();
+            }
+        })
+    }
+</script>

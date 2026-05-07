@@ -1,0 +1,43 @@
+﻿@model PCPartsWeb.Models.User
+@{ ViewBag.Title = "Sửa thông tin"; Layout = "~/Views/Shared/_Layout.cshtml"; }
+
+<div class="container mt-4" style="max-width: 600px;">
+    <div class="card shadow border-0">
+        <div class="card-header bg-primary text-white fw-bold">Sửa thông tin: @Model.FullName</div>
+        <div class="card-body">
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.UserID)
+
+                <div class="mb-3">
+                    <label>Họ và Tên</label>
+                    @Html.TextBoxFor(m => m.FullName, new { @class = "form-control", required = "required" })
+                </div>
+                <div class="mb-3">
+                    <label>Email</label>
+                    <input type="text" class="form-control" value="@Model.Email" disabled readonly />
+                    <small class="text-muted">Không được phép đổi Email.</small>
+                </div>
+                <div class="mb-3">
+                    <label>Số điện thoại</label>
+                    @Html.TextBoxFor(m => m.Phone, new { @class = "form-control" })
+                </div>
+                <div class="mb-3">
+                    <label>Địa chỉ</label>
+                    @Html.TextBoxFor(m => m.Address, new { @class = "form-control" })
+                </div>
+                <div class="mb-3">
+                    <label>Quyền hạn</label>
+                    <select name="Role" class="form-select">
+                        <option value="User" @(Model.Role == "User" ? "selected" : "")>User</option>
+                        <option value="Admin" @(Model.Role == "Admin" ? "selected" : "")>Admin</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">Cập nhật</button>
+                <a href="@Url.Action("Users")" class="btn btn-link w-100 mt-2">Quay lại</a>
+            }
+        </div>
+    </div>
+</div>

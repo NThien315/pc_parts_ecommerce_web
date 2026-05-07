@@ -1,0 +1,192 @@
+﻿@model PCPartsWeb.Models.User
+@{
+    ViewBag.Title = "Hồ sơ cá nhân";
+    ViewBag.HideSidebar = true;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var currentUserId = Session["UserID"] != null ? (int)Session["UserID"] : 0;
+    var userRole = Session["Role"] as string;
+    var isMe = Model.UserID == currentUserId;
+
+    // Lấy lịch sử đặt hàng
+    var orders = ViewBag.OrderHistory as List<PCPartsWeb.Models.Order>;
+}
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-9">
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <div class="bg-primary text-white p-4 text-center position-relative" style="background: linear-gradient(135deg, #0d6efd, #0dcaf0);">
+                    <div class="mb-3">
+                        <div class="d-inline-flex align-items-center justify-content-center bg-white text-primary rounded-circle border border-4 border-white shadow-sm"
+                             style="width: 100px; height: 100px; font-size: 40px; font-weight: bold;">
+                            @(Model.FullName?.Substring(0, 1) ?? "U")
+                        </div>
+                    </div>
+                    <h3 class="fw-bold m-0">@Model.FullName</h3>
+                    <p class="opacity-75">@Model.Role</p>
+                </div>
+
+                <div class="card-body p-4">
+
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success"><i class="bi bi-check-circle"></i> @TempData["Success"]</div>
+                    }
+
+                    <ul class="nav nav-tabs" id="profileTabs" role="tablist">
+                        <li class="nav-item">
+                            <button class="nav-link active fw-bold" data-bs-toggle="tab" data-bs-target="#profile-info" type="button">Thông tin cá nhân</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#order-history" type="button">Lịch sử đặt hàng</button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content pt-3" id="profileTabsContent">
+
+                        <div class="tab-pane fade show active" id="profile-info" role="tabpanel">
+
+                            <h5 class="fw-bold mb-3">Thông tin tài khoản</h5>
+
+                            @if (isMe)
+                            {
+                                using (Html.BeginForm("UserProfile", "Account", FormMethod.Post, new { @class = "p-3 border rounded-3 bg-light" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+                                    @Html.HiddenFor(model => model.UserID)
+                                    @Html.HiddenFor(model => model.Email)
+                                    @Html.HiddenFor(model => model.Role)
+                                    @Html.HiddenFor(model => model.PasswordHash)
+
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Email (Không đổi)</label>
+                                        <input type="email" class="form-control" value="@Model.Email" readonly />
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="FullName" class="form-label fw-bold">Họ và Tên</label>
+                                        @Html.EditorFor(model => model.FullName, new { htmlAttributes = new { @class = "form-control" } })
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="Phone" class="form-label fw-bold">Số điện thoại</label>
+                                        @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control" } })
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="Address" class="form-label fw-bold">Địa chỉ nhận hàng</label>
+                                        @Html.TextAreaFor(model => model.Address, 4, 100, new { @class = "form-control" })
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary mt-3 fw-bold">
+                                        <i class="bi bi-save me-2"></i> Lưu cập nhật
+                                    </button>
+                                }
+                            }
+                            else
+                            {
+                                <div class="p-3 border rounded-3 bg-light">
+                                    <p class="mb-1 fw-bold">Email: <span class="fw-normal">@Model.Email</span></p>
+                                    <p class="mb-1 fw-bold">SĐT: <span class="fw-normal">@Model.Phone</span></p>
+                                    <p class="mb-1 fw-bold">Địa chỉ: <span class="fw-normal">@Model.Address</span></p>
+                                </div>
+                            }
+
+                            <hr class="my-4 text-muted opacity-25">
+
+                            <div class="d-flex justify-content-center gap-3">
+                                @if (userRole == "Admin")
+                                {
+                                    <a href="@Url.Action("Users", "Admin")" class="btn btn-outline-secondary px-4 rounded-pill"><i class="bi bi-arrow-left"></i> Quản lý User</a>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("Index", "Home")" class="btn btn-outline-secondary px-4 rounded-pill"><i class="bi bi-house"></i> Trang chủ</a>
+                                }
+
+                                @if (isMe)
+                                {
+                                    <button type="button" class="btn btn-warning fw-bold px-4 rounded-pill" data-bs-toggle="modal" data-bs-target="#changePassModal">
+                                        <i class="bi bi-key-fill"></i> Đổi mật khẩu
+                                    </button>
+                                }
+
+                                @if (userRole == "Admin" && !isMe)
+                                {
+                                    <form action="@Url.Action("ResetPassword", "Admin")" method="post" id="frmReset">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@Model.UserID" />
+                                        <button type="button" class="btn btn-danger fw-bold px-4 rounded-pill" onclick="confirmReset()">
+                                            <i class="bi bi-arrow-counterclockwise"></i> Reset Mật khẩu
+                                        </button>
+                                    </form>
+                                }
+                            </div>
+                        </div> <div class="tab-pane fade" id="order-history" role="tabpanel">
+                            <h5 class="fw-bold mb-4">Lịch sử giao dịch</h5>
+                            @if (orders == null || !orders.Any())
+                            {
+                                <div class="alert alert-info text-center mt-3">Bạn chưa có đơn hàng nào.</div>
+                            }
+                            else
+                            {
+                                foreach (var order in orders)
+                                {
+                                    <div class="card mb-3 shadow-sm border-start border-4 border-@((order.Status == "Hoàn thành") ? "success" : (order.Status == "Đã hủy" ? "danger" : "warning"))">
+                                        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                            <span class="fw-bold">Đơn hàng #@order.OrderID</span>
+                                            <span class="badge bg-@((order.Status == "Hoàn thành") ? "success" : (order.Status == "Đã hủy" ? "danger" : "warning"))">@order.Status</span>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <p class="mb-1">**Ngày đặt:** @order.OrderDate.ToString("dd/MM/yyyy HH:mm")</p>
+                                                    <p class="mb-1">**Tổng tiền:** <span class="text-danger fw-bold">@String.Format("{0:N0}₫", order.TotalAmount)</span></p>
+
+                                                    <p class="mb-1">**Địa chỉ nhận:** @order.Address</p>
+                                                    <p class="mb-1">**SĐT nhận hàng:** @order.PhoneNumber</p>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <h6 class="fw-bold mb-2">Chi tiết sản phẩm:</h6>
+                                                    <ul class="list-unstyled small">
+                                                        @foreach (var detail in order.OrderItems)
+                                                        {
+                                                            <li>
+                                                                - @detail.Quantity x @detail.Product.ProductName
+                                                                (@String.Format("{0:N0}₫", detail.Price))
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function confirmReset() {
+        Swal.fire({
+            title: 'Reset mật khẩu?',
+            text: "Mật khẩu sẽ về mặc định: 123456",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            confirmButtonText: 'Reset ngay'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('frmReset').submit();
+            }
+        })
+    }
+</script>

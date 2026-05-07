@@ -1,0 +1,204 @@
+﻿@model PCPartsWeb.Models.Product
+
+@{
+    ViewBag.Title = Model.ProductName;
+    ViewBag.HideSidebar = true;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // --- CẤU HÌNH ẢNH MẶC ĐỊNH TẠI ĐÂY ---
+    var defaultImg = Url.Content("~/Images/no-image.jpg"); 
+    
+    var mainImgPath = string.IsNullOrEmpty(Model.Images) ? defaultImg : Url.Content("~/Images/" + Model.Images);
+}
+
+<div class="container mt-4 mb-5">
+    
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")" class="text-decoration-none">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Shop", "Home")" class="text-decoration-none">Sản phẩm</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.ProductName</li>
+        </ol>
+    </nav>
+
+    <div class="card border-0 shadow-sm mb-5">
+        <div class="card-body p-4">
+            <div class="row">
+                <div class="col-md-5 text-center mb-4 mb-md-0">
+                    <div class="p-3 border rounded bg-white d-flex align-items-center justify-content-center" style="height: 400px;">
+                        <img src="@mainImgPath" 
+                             class="img-fluid" 
+                             style="max-height: 100%; object-fit: contain;" 
+                             alt="@Model.ProductName"
+                             onerror="this.onerror=null;this.src='@defaultImg';"/>
+                    </div>
+                </div>
+
+                <div class="col-md-7">
+                    <h2 class="fw-bold text-dark">@Model.ProductName</h2>
+                    
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <span class="badge bg-primary">@Model.Category.CategoryName</span>
+                        <span class="badge bg-secondary">@Model.Brand.BrandName</span>
+                        <span class="text-muted small ms-2">Mã SP: #@Model.ProductID</span>
+                    </div>
+
+                    <div class="mb-4 p-3 bg-light rounded">
+                        @if (Model.DiscountPrice < Model.Price)
+                        {
+                            <div class="d-flex align-items-end gap-3">
+                                <h3 class="text-danger fw-bold m-0">@String.Format("{0:N0}₫", Model.DiscountPrice)</h3>
+                                <span class="text-decoration-line-through text-muted fs-5">@String.Format("{0:N0}₫", Model.Price)</span>
+                                <span class="badge bg-danger">-@Math.Round((1 - (decimal)Model.DiscountPrice / (decimal)Model.Price) * 100)%</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <h3 class="text-danger fw-bold m-0">@String.Format("{0:N0}₫", Model.Price)</h3>
+                        }
+                    </div>
+
+                    <div class="mb-4">
+                        @if (Model.StockQuantity > 0)
+                        {
+                            <p class="text-success fw-bold"><i class="bi bi-check-circle-fill"></i> Còn hàng (@Model.StockQuantity sản phẩm)</p>
+                        }
+                        else
+                        {
+                            <p class="text-danger fw-bold"><i class="bi bi-x-circle-fill"></i> Hết hàng tạm thời</p>
+                        }
+                        
+                        <p class="text-muted">
+                            @if(!string.IsNullOrEmpty(Model.Description) && Model.Description.Length > 150) {
+                                @Html.Raw(Model.Description.Substring(0, 150) + "...")
+                            } else {
+                                @Html.Raw(Model.Description)
+                            }
+                        </p>
+                    </div>
+
+                    @if (Model.StockQuantity > 0)
+                    {
+                        <form action="@Url.Action("Add", "Cart")" method="post" class="d-flex gap-3">
+                            <input type="hidden" name="productId" value="@Model.ProductID" />
+                            <input type="number" name="quantity" value="1" min="1" max="@Model.StockQuantity" class="form-control text-center fw-bold" style="width: 80px;">
+                            <button type="submit" class="btn btn-danger flex-grow-1 fw-bold text-uppercase">
+                                <i class="bi bi-cart-plus-fill"></i> Thêm vào giỏ ngay
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <button class="btn btn-secondary w-100 disabled">Liên hệ khi có hàng</button>
+                    }
+                    
+                    <div class="row mt-4 g-2 small text-muted">
+                        <div class="col-6"><i class="bi bi-shield-check text-primary"></i> Bảo hành chính hãng 24 tháng</div>
+                        <div class="col-6"><i class="bi bi-arrow-repeat text-primary"></i> Đổi trả trong 7 ngày</div>
+                        <div class="col-6"><i class="bi bi-truck text-primary"></i> Miễn phí vận chuyển toàn quốc</div>
+                        <div class="col-6"><i class="bi bi-headset text-primary"></i> Hỗ trợ kỹ thuật trọn đời</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-bottom-0">
+            <ul class="nav nav-tabs card-header-tabs" id="productTabs" role="tablist">
+                <li class="nav-item">
+                    <button class="nav-link active fw-bold" id="desc-tab" data-bs-toggle="tab" data-bs-target="#desc" type="button">Mô tả chi tiết</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link fw-bold" id="review-tab" data-bs-toggle="tab" data-bs-target="#review" type="button">Đánh giá</button>
+                </li>
+            </ul>
+        </div>
+        <div class="card-body p-4">
+            <div class="tab-content" id="productTabsContent">
+                <div class="tab-pane fade show active" id="desc">
+                    <div class="product-description">
+                        @if (!string.IsNullOrEmpty(Model.Description)) {
+                            @Html.Raw(Model.Description.Replace("\n", "<br>"))
+                        } else {
+                            <p class="text-muted">Đang cập nhật thông tin chi tiết...</p>
+                        }
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="review">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <h5 class="fw-bold mb-4">Khách hàng nhận xét</h5>
+                            <div class="d-flex mb-4">
+                                <div class="flex-shrink-0">
+                                    <div class="bg-light rounded-circle d-flex align-items-center justify-content-center fw-bold text-primary border" style="width: 50px; height: 50px;">A</div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="fw-bold mb-1">Nguyễn Văn A <span class="text-warning small"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></span></h6>
+                                    <p class="small text-muted mb-2">20/12/2025</p>
+                                    <p class="mb-0">Sản phẩm rất tốt, đóng gói cẩn thận.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="bg-light p-4 rounded-3">
+                                <h6 class="fw-bold mb-3">Viết đánh giá</h6>
+                                <p class="small text-muted">Tính năng đang phát triển...</p>
+                                <button class="btn btn-primary w-100 disabled">Gửi đánh giá</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @{
+        var relatedProducts = ViewBag.RelatedProducts as IEnumerable<PCPartsWeb.Models.Product>;
+    }
+    @if (relatedProducts != null && relatedProducts.Any())
+    {
+        <div class="mt-5">
+            <h4 class="fw-bold text-uppercase border-start border-4 border-danger ps-3 mb-4">Sản phẩm liên quan</h4>
+            <div class="row">
+                @foreach (var item in relatedProducts)
+                {
+                    // Xử lý ảnh cho từng sản phẩm liên quan
+                    var itemImgPath = string.IsNullOrEmpty(item.Images) ? defaultImg : Url.Content("~/Images/" + item.Images);
+
+                    <div class="col-md-3 col-6 mb-4">
+                        <div class="card h-100 border-0 shadow-sm product-card-hover">
+                            <div class="position-relative p-3 text-center" style="height: 200px; background: #fff;">
+                                <a href="@Url.Action("Details", "Product", new { id = item.ProductID })">
+                                    <img src="@itemImgPath" 
+                                         class="img-fluid h-100 w-100" 
+                                         style="object-fit: contain;"
+                                         onerror="this.onerror=null;this.src='@defaultImg';"/>
+                                </a>
+                                @if (item.DiscountPrice < item.Price) {
+                                    <span class="position-absolute top-0 start-0 m-2 badge bg-danger">SALE</span>
+                                }
+                            </div>
+                            <div class="card-body d-flex flex-column border-top">
+                                <a href="@Url.Action("Details", "Product", new { id = item.ProductID })" class="text-decoration-none text-dark">
+                                    <h6 class="fw-bold text-truncate" title="@item.ProductName">@item.ProductName</h6>
+                                </a>
+                                <div class="mt-auto">
+                                    @if (item.DiscountPrice < item.Price) {
+                                        <div class="fw-bold text-danger">@String.Format("{0:N0}₫", item.DiscountPrice)</div>
+                                        <small class="text-decoration-line-through text-muted">@String.Format("{0:N0}₫", item.Price)</small>
+                                    } else {
+                                        <div class="fw-bold text-danger">@String.Format("{0:N0}₫", item.Price)</div>
+                                    }
+                                </div>
+                                <a href="@Url.Action("Details", "Product", new { id = item.ProductID })" class="btn btn-outline-primary btn-sm mt-2 w-100">Xem chi tiết</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <style>.product-card-hover { transition: transform 0.2s; } .product-card-hover:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; }</style>
+    }
+</div>

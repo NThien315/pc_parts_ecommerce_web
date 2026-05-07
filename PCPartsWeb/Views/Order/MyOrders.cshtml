@@ -1,0 +1,38 @@
+﻿@model IEnumerable<PCPartsWeb.Models.Order>
+@{
+    ViewBag.Title = "MyOrders";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>ĐƠN HÀNG CỦA TÔI</h2>
+<hr />
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Mã đơn</th>
+            <th>Ngày đặt</th>
+            <th>Tổng tiền</th>
+            <th>Trạng thái</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var o in Model)
+        {
+            <tr>
+                <td>#@o.OrderID</td>
+                <td>@o.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@o.TotalAmount.ToString("N0") đ</td>
+                <td>@o.Status</td>
+                <td>
+                    @Html.ActionLink("Xem chi tiết", "Details", new { id = o.OrderID }, new { @class = "btn btn-primary btn-sm" })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+

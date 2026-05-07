@@ -1,0 +1,199 @@
+﻿@model IEnumerable<PCPartsWeb.Models.Product>
+
+@{
+    ViewBag.Title = "Quản lý Sản phẩm";
+    ViewBag.HideSidebar = true; // Full màn hình cho thoáng
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4 mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="text-primary fw-bold mb-0"><i class="bi bi-box-seam-fill"></i> Quản lý Sản phẩm</h3>
+            <span class="text-muted small">Tổng cộng: @Model.Count() sản phẩm</span>
+        </div>
+        <a href="@Url.Action("Create")" class="btn btn-success shadow-sm px-4">
+            <i class="bi bi-plus-lg"></i> Thêm mới
+        </a>
+    </div>
+
+    <div class="card shadow-sm mb-4 border-0">
+        <div class="card-body bg-light rounded">
+            <form action="@Url.Action("Index", "Product")" method="get" class="row g-2 align-items-center">
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                        <input type="text" name="search" class="form-control border-start-0 ps-0"
+                               placeholder="Nhập tên sản phẩm..."
+                               value="@ViewBag.CurrentSearch">
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    @Html.DropDownList("categoryId", (SelectList)ViewBag.Categories, "-- Tất cả Danh mục --", new { @class = "form-select", onchange = "this.form.submit()" })
+                </div>
+
+                <div class="col-md-3">
+                    @Html.DropDownList("brandId", (SelectList)ViewBag.Brands, "-- Tất cả Hãng --", new { @class = "form-select", onchange = "this.form.submit()" })
+                </div>
+
+                <div class="col-md-2">
+                    <a href="@Url.Action("Index", "Product")" class="btn btn-outline-secondary w-100">
+                        <i class="bi bi-arrow-counterclockwise"></i> Làm mới
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-primary text-white">
+                        <tr>
+                            <th class="ps-3 py-3">ID</th>
+                            <th style="width: 80px;">Ảnh</th>
+                            <th style="width: 25%;">Tên sản phẩm</th>
+                            <th>Giá bán</th>
+                            <th>Kho</th>
+                            <th>Danh mục / Hãng</th>
+                            <th class="text-center">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="ps-3 fw-bold text-muted">#@item.ProductID</td>
+
+                                    <td>
+                                        <div style="width: 60px; height: 60px; background: #fff; border: 1px solid #eee; border-radius: 6px; padding: 2px; display: flex; align-items: center; justify-content: center;">
+                                            @if (!string.IsNullOrEmpty(item.Images))
+                                            {
+                                                <img src="@Url.Content("~/Images/" + item.Images)"
+                                                     alt="Img"
+                                                     style="max-width: 100%; max-height: 100%; object-fit: contain;"
+                                                     onerror="this.onerror=null;this.src='https://via.placeholder.com/60?text=No+Img';" />
+                                            }
+                                            else
+                                            {
+                                                <i class="bi bi-image text-muted" style="font-size: 20px;"></i>
+                                            }
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <div class="fw-bold text-dark text-truncate" style="max-width: 250px;" title="@item.ProductName">
+                                            @item.ProductName
+                                        </div>
+                                        @if (item.DiscountPrice < item.Price)
+                                        {
+                                            <span class="badge bg-danger" style="font-size: 0.65rem;">Giảm giá</span>
+                                        }
+                                    </td>
+
+                                    <td>
+                                        @if (item.DiscountPrice < item.Price)
+                                        {
+                                            <div class="fw-bold text-danger">@String.Format("{0:N0}₫", item.DiscountPrice)</div>
+                                            <small class="text-decoration-line-through text-muted" style="font-size: 0.8rem;">
+                                                @String.Format("{0:N0}₫", item.Price)
+                                            </small>
+                                        }
+                                        else
+                                        {
+                                            <div class="fw-bold">@String.Format("{0:N0}₫", item.Price)</div>
+                                        }
+                                    </td>
+
+                                    <td>
+                                        @if (item.StockQuantity > 10)
+                                        {
+                                            <span class="badge bg-success bg-opacity-10 text-success border border-success px-2 py-1">
+                                                Sẵn hàng (@item.StockQuantity)
+                                            </span>
+                                        }
+                                        else if (item.StockQuantity > 0)
+                                        {
+                                            <span class="badge bg-warning text-dark border border-warning px-2 py-1">
+                                                Sắp hết (@item.StockQuantity)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary px-2 py-1">Hết hàng</span>
+                                        }
+                                    </td>
+
+                                    <td>
+                                        <div class="small fw-bold text-primary">@item.Category.CategoryName</div>
+                                        <div class="small text-muted">@item.Brand.BrandName</div>
+                                    </td>
+
+                                    <td class="text-center">
+                                        <div class="d-flex justify-content-center gap-1">
+                                            <a href="@Url.Action("Edit", new { id = item.ProductID })"
+                                               class="btn btn-sm btn-outline-warning" title="Sửa">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+                                            <a href="@Url.Action("Details", new { id = item.ProductID })"
+                                               class="btn btn-sm btn-outline-info" title="Xem chi tiết">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+
+                                            <button type="button" class="btn btn-sm btn-outline-danger"
+                                                    onclick="confirmDelete(@item.ProductID)" title="Xóa">
+                                                <i class="bi bi-trash3"></i>
+                                            </button>
+
+                                            <form id="delete-form-@item.ProductID" action="@Url.Action("Delete", "Product")" method="post" style="display:none;">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@item.ProductID" />
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center py-5">
+                                    <i class="bi bi-inbox text-muted display-4"></i>
+                                    <p class="mt-3 text-muted">Không tìm thấy sản phẩm nào.</p>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="p-3 border-top bg-light">
+                <small class="text-muted">Hiển thị toàn bộ kết quả.</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function confirmDelete(id) {
+        Swal.fire({
+            title: 'Xóa sản phẩm này?',
+            text: "Hành động này không thể hoàn tác!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Xóa ngay',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('delete-form-' + id).submit();
+            }
+        })
+    }
+</script>

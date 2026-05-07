@@ -1,0 +1,78 @@
+﻿@model PCPartsWeb.Models.Product
+
+@{
+    ViewBag.Title = "Chỉnh sửa sản phẩm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-warning text-dark">
+            <h4 class="mb-0"><i class="bi bi-pencil-square"></i> Chỉnh sửa: @Model.ProductName</h4>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm("Edit", "Product", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.ProductID)
+                @Html.HiddenFor(model => model.Images) <div class="form-horizontal">
+    @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            @Html.LabelFor(model => model.ProductName, "Tên sản phẩm", new { @class = "form-label fw-bold" })
+            @Html.EditorFor(model => model.ProductName, new { htmlAttributes = new { @class = "form-control" } })
+        </div>
+        <div class="col-md-6">
+            <label class="form-label fw-bold">Hình ảnh</label>
+            <div class="d-flex align-items-center">
+                <img src="~/Images/@Model.Images" style="width: 80px; height: 80px; object-fit: cover; margin-right: 15px; border: 1px solid #ddd;" />
+                <div>
+                    <input type="file" name="ImageUpload" class="form-control" accept="image/*" />
+                    <small class="text-muted">Chọn ảnh mới để thay thế (nếu cần)</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label fw-bold">Danh mục</label>
+        @Html.DropDownList("CategoryID", null, new { @class = "form-select" })
+        @Html.ValidationMessageFor(model => model.CategoryID, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label fw-bold">Thương hiệu</label>
+        @Html.DropDownList("BrandID", null, new { @class = "form-select" })
+        @Html.ValidationMessageFor(model => model.BrandID, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-4">
+            @Html.LabelFor(model => model.Price, "Giá bán", new { @class = "form-label fw-bold" })
+            @Html.EditorFor(model => model.Price, new { htmlAttributes = new { @class = "form-control" } })
+        </div>
+        <div class="col-md-4">
+            @Html.LabelFor(model => model.DiscountPrice, "Giá giảm", new { @class = "form-label fw-bold" })
+            @Html.EditorFor(model => model.DiscountPrice, new { htmlAttributes = new { @class = "form-control" } })
+        </div>
+        <div class="col-md-4">
+            @Html.LabelFor(model => model.StockQuantity, "Tồn kho", new { @class = "form-label fw-bold" })
+            @Html.EditorFor(model => model.StockQuantity, new { htmlAttributes = new { @class = "form-control" } })
+        </div>
+    </div>
+
+    <div class="mb-3">
+        @Html.LabelFor(model => model.Description, "Mô tả", new { @class = "form-label fw-bold" })
+        @Html.TextAreaFor(model => model.Description, new { @class = "form-control", rows = "4" })
+    </div>
+
+    <div class="d-flex justify-content-end gap-2">
+        <a href="@Url.Action("Products", "Admin")" class="btn btn-secondary">Hủy</a>
+        <button type="submit" class="btn btn-warning">Lưu thay đổi</button>
+    </div>
+</div>
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,113 @@
+﻿@using PagedList.Mvc;
+@model PagedList.IPagedList<PCPartsWeb.Models.Product>
+
+@{
+    ViewBag.Title = "Tất cả sản phẩm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var defaultImg = "/Images/no-image.jpg";
+}
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+<div class="container mt-4 mb-5">
+    <h2 class="fw-bold mb-4 text-uppercase border-start border-4 border-primary ps-3">Tất cả sản phẩm</h2>
+
+    <div class="row mb-4 align-items-center bg-light p-3 rounded">
+        <div class="col-md-6">
+            <form action="/Home/Shop" method="get" class="d-flex">
+                <input type="text" name="search" value="@ViewBag.CurrentSearch" class="form-control me-2" placeholder="Tìm tên sản phẩm..." />
+                <button class="btn btn-primary"><i class="bi bi-search"></i></button>
+            </form>
+        </div>
+        <div class="col-md-6 text-end">
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-sort-down"></i>
+                    Sắp xếp: @(ViewBag.CurrentSort == "name_desc" ? "Tên: Z-A" :
+                       (ViewBag.CurrentSort == "Price" ? "Giá: Tăng dần" :
+                       (ViewBag.CurrentSort == "price_desc" ? "Giá: Giảm dần" :
+                       (ViewBag.CurrentSort == "cate" ? "Theo Danh mục" : "Tên: A-Z"))))
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-end shadow">
+                    <li>@Html.ActionLink("Tên: A-Z", "Shop", new { sortOrder = "", search = ViewBag.CurrentSearch }, new { @class = "dropdown-item" })</li>
+                    <li>@Html.ActionLink("Tên: Z-A", "Shop", new { sortOrder = "name_desc", search = ViewBag.CurrentSearch }, new { @class = "dropdown-item" })</li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>@Html.ActionLink("Giá: Tăng dần", "Shop", new { sortOrder = "Price", search = ViewBag.CurrentSearch }, new { @class = "dropdown-item" })</li>
+                    <li>@Html.ActionLink("Giá: Giảm dần", "Shop", new { sortOrder = "price_desc", search = ViewBag.CurrentSearch }, new { @class = "dropdown-item" })</li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>@Html.ActionLink("Theo Danh mục", "Shop", new { sortOrder = "cate", search = ViewBag.CurrentSearch }, new { @class = "dropdown-item" })</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Count == 0)
+    {
+        // === TRƯỜNG HỢP KHÔNG CÓ SẢN PHẨM (Hiện thông báo to ở giữa) ===
+        <div class="alert alert-warning text-center mt-5 p-5 shadow-sm">
+            <i class="bi bi-search fs-1 text-warning"></i>
+            <h4 class="mt-3">Không tìm thấy sản phẩm nào phù hợp!</h4>
+            <p class="text-muted">Vui lòng thử từ khóa khác hoặc quay lại trang chủ.</p>
+            <a href="/Home/Shop" class="btn btn-outline-dark mt-2">Xem tất cả sản phẩm</a>
+        </div>
+    }
+    else
+    {
+        // === TRƯỜNG HỢP CÓ SẢN PHẨM (Hiện lưới sản phẩm) ===
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="position-relative">
+                            @{
+                                var imgPath = string.IsNullOrEmpty(item.Images) ? defaultImg : "/Images/" + item.Images;
+                            }
+                            <img src="@imgPath"
+                                 class="card-img-top p-3"
+                                 style="height: 200px; object-fit: contain;"
+                                 alt="@item.ProductName"
+                                 onerror="this.onerror=null;this.src='@defaultImg';" />
+                            @if (item.DiscountPrice < item.Price)
+                            {
+                                <span class="position-absolute top-0 start-0 bg-danger text-white px-2 py-1 m-2 rounded small fw-bold">GIẢM SỐC</span>
+                            }
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <h6 class="card-title fw-bold text-dark" style="min-height: 40px;">
+                                <a href="@Url.Action("Details", "Product", new { id = item.ProductID })" class="text-decoration-none text-dark">@item.ProductName</a>
+                            </h6>
+                            <div class="mt-auto">
+                                @if (item.DiscountPrice < item.Price)
+                                {
+                                    <div class="text-danger fw-bold fs-5">@String.Format("{0:N0}₫", item.DiscountPrice)</div>
+                                    <div class="text-muted small text-decoration-line-through">@String.Format("{0:N0}₫", item.Price)</div>
+                                }
+                                else
+                                {
+                                    <div class="text-danger fw-bold fs-5">@String.Format("{0:N0}₫", item.Price)</div>
+                                }
+                            </div>
+                            <div class="d-grid mt-3">
+                                <a href="@Url.Action("Details", "Product", new { id = item.ProductID })" class="btn btn-outline-primary btn-sm">Xem chi tiết</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="d-flex justify-content-center mt-4">
+            @Html.PagedListPager(Model, page => Url.Action("Shop", new { page, sortOrder = ViewBag.CurrentSort, search = ViewBag.CurrentSearch }),
+                 new PagedListRenderOptions
+                 {
+                     LiElementClasses = new string[] { "page-item" },
+                     LinkToPreviousPageFormat = "Trước",
+                     LinkToNextPageFormat = "Sau",
+                     ClassToApplyToFirstListItemInPager = "page-item",
+                     ClassToApplyToLastListItemInPager = "page-item"
+                 })
+        </div>
+    }
+</div>
